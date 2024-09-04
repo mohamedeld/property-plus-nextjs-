@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import logo from "@/public/images/logo-white.png";
 import {FaGoogle} from "react-icons/fa"
 import { usePathname } from 'next/navigation';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 const Navbar = () => {
   const [isMobileNavbar,setIsMobileNavbar]= useState(false);
   const [isProfileMenu,setIsProfileMenu]= useState(false);
@@ -170,6 +170,10 @@ const Navbar = () => {
                 role="menuitem"
                 tabIndex="-1"
                 id="user-menu-item-2"
+                onClick={()=>{
+                  setIsProfileMenu(false);
+                  signOut();
+                }}
                 >Sign Out</button>
             </div>)}
           </div>
