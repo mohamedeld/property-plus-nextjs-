@@ -5,11 +5,12 @@ import React, { useState } from 'react'
 import logo from "@/public/images/logo-white.png";
 import {FaGoogle} from "react-icons/fa"
 import { usePathname } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
 const Navbar = () => {
   const [isMobileNavbar,setIsMobileNavbar]= useState(false);
   const [isProfileMenu,setIsProfileMenu]= useState(false);
   const pathName = usePathname();
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const {data:session} = useSession();
   return (
     <>
     <nav className="bg-blue-700 border-b border-blue-500">
@@ -62,24 +63,25 @@ const Navbar = () => {
             <div className="flex space-x-2">
               <Link
                 href="/"
-                className={`${pathName === "/"?'bg-black':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
+                className={`${pathName === "/"?'bg-black text-white py-2 px-3':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                 >Home</Link>
               <Link
                 href="/properties"
-                className={`${pathName === "/properties"?'bg-black':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
+                className={`${pathName === "/properties"?'bg-black text-white py-2 px-3':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                 >Properties</Link>
               <Link
                 href="/properties/add"
-                className={`${pathName === "/properties/add"?'bg-black':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
+                className={`${pathName === "/properties/add"?'bg-black text-white py-2 px-3':''}text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                 >Add Property</Link>
             </div>
           </div>
         </div>
 
-        {!isLoggedIn && <div className="hidden md:block md:ml-6">
+        {!session && <div className="hidden md:block md:ml-6">
           <div className="flex items-center">
             <button
               className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+              onClick={()=> signIn('google')}
             >
              <FaGoogle className="text-white mr-2"/>
               <span>Login or Register</span>
@@ -87,7 +89,7 @@ const Navbar = () => {
           </div>
         </div>}
 
-        {isLoggedIn && (<div
+        {session && (<div
           className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0"
         >
           <Link href="/messages" className="relative group">
@@ -134,7 +136,7 @@ const Navbar = () => {
                 <Image
                 width={32} height={32}
                   className="rounded-full object-cover"
-                  src="/images/profile.png"
+                  src={session?.user?.image || "/images/profile.png"}
                   alt="profile image"
                 />
               </button>
