@@ -1,5 +1,6 @@
 'use server';
 
+import cloudinary from "@/config/cloudinary";
 import connectToDb from "@/config/database";
 import Property from "@/models/Property";
 import { getUserSession } from "@/utils/getUserSession";
@@ -16,7 +17,7 @@ export async function addPropertyAction(formData){
     const {userId} = sessionUser;
 
     const amenities = formData.getAll('amenities');
-    const images = formData.getAll('images').filter(image=> image.name !== '').map(image => image.name);
+    const images = formData.getAll('images').filter(image=> image.name !== '');
     const propertyData = {
       owner:userId,
       type:formData.get('type'),
@@ -42,9 +43,23 @@ export async function addPropertyAction(formData){
         email:formData.get('seller_info.email'),
         phone:formData.get('seller_info.phone'),
       },
-      images
+      
     }
+    const imageUrls = []
+    for(let imageFile of images){
+      const imageBuffer = await imageFile.arrayBuffer();
+      const imageArray = Array.from(new Uint8Array(imageBuffer));
+      const imageData= Buffer.from(imageArray);
 
+      // convert to base64 
+      const imageBase64 = imageData?.toString('base64');
+      // make request to cloundinary
+      const result = await cloudinary.uploader.upload(`data:image/png;base64,${imageBase64}`,{
+        folder:'propertybrad'
+      })
+      imageUrls.push(result.secure_url);
+    }
+    propertyData.images = imageUrls;
     const newProperty = await Property.create(propertyData);
     revalidatePath('/','layout');
     
