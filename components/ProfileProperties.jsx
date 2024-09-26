@@ -19,13 +19,13 @@ const ProfileProperties = ({ properties: initialProperties }) => {
                   height={0}
                   sizes="100vw"
                   className="h-32 w-full rounded-md object-cover"
-                  src="/images/properties/a1.jpg"
+                  src={property?.images[0] || "/images/properties/a1.jpg"}
                   alt="Property 1"
                 />
               </a>
               <div className="mt-2">
-                <p className="text-lg font-semibold">Property Title 1</p>
-                <p className="text-gray-600">Address: 123 Main St</p>
+                <p className="text-lg font-semibold">{property?.name} 1</p>
+                <p className="text-gray-600">Address: {property?.location?.street} {property?.location?.city} {" "} {property?.location?.state}</p>
               </div>
               <div className="mt-2">
                 <Link
